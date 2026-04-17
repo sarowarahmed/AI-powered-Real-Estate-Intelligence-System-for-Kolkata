@@ -4,11 +4,11 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pandas as pd
 from sqlalchemy import create_engine
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_absolute_error, r2_score
 import xgboost as xgb
 import joblib
-
+ 
 # Load data from DB
 engine = create_engine("sqlite:///data/real_estate.db")
 df = pd.read_sql("SELECT * FROM properties", engine)
@@ -68,6 +68,11 @@ r2 = r2_score(y_test, y_pred)
 
 print(f"MAE: {mae:.2f}")
 print(f"R2 Score: {r2:.4f}")
+
+scores = cross_val_score(model, X, y, cv=5, scoring="r2")
+
+print("CV R2 Scores:", scores)
+print("Mean CV R2:", scores.mean())
 
 # ---------------------------
 # SAVE MODEL
