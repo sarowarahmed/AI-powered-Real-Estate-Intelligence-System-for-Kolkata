@@ -88,6 +88,15 @@ input_data = pd.DataFrame([{
     "postoffice_distance_km": postoffice_distance
 }])
 
+    st.write({
+        "🚇 Metro (km)": metro_distance,
+        "🏥 Hospital (km)": hospital_distance,
+        "🏫 School (km)": school_distance,
+        "🎓 College (km)": college_distance,
+        "🚌 Bus": bus_distance,
+        "🚆 Railway": railway_distance,
+    })
+
 # -----------------------
 # PREDICTION
 # -----------------------
@@ -148,32 +157,33 @@ st.subheader("🔁 Compare Properties")
 sample = df.sample(5)
 st.dataframe(sample[["location", "price", "sqft", "livability_score"]])
 
-import pydeck as pdk
+from streamlit_folium import st_folium
+import folium
 
-if "lat" in df.columns:
-    st.subheader("🗺️ Live Location Map")
+st.subheader("🗺️ Click on Map to Predict")
 
-    map_df = pd.DataFrame({
-        "lat": [lat],
-        "lon": [lon]
-        })
+# Default Kolkata center
+m = folium.Map(location=[22.57, 88.36], zoom_start=12)
 
-    st.pydeck_chart(pdk.Deck(
-        initial_view_state=pdk.ViewState(
-            latitude=lat,
-            longitude=lon,
-            zoom=13,
-        ),
-        layers=[
-            pdk.Layer(
-                "ScatterplotLayer",
-                data=map_df,
-                get_position='[lon, lat]',
-                get_radius=300,
-                get_color=[255, 0, 0],
-            )
-        ],
-    ))
+# Render map
+map_data = st_folium(m, width=700, height=500)
+
+if map_data and map_data.get("last_clicked"):
+    lat = map_data["last_clicked"]["lat"]
+    lon = map_data["last_clicked"]["lng"]
+
+    st.success(f"📍 Selected Location: {lat:.4f}, {lon:.4f}")
+
+    geo_data = get_nearest_places(lat, lon)
+
+    metro_distance = geo_data.get("metro", 5)
+    hospital_distance = geo_data.get("hospital", 5)
+    school_distance = geo_data.get("school", 5)
+    college_distance = geo_data.get("college", 5)
+    bus_distance = geo_data.get("bus", 3)
+    railway_distance = geo_data.get("railway", 5)
+    police_distance = geo_data.get("police", 5)
+    postoffice_distance = geo_data.get("post_office", 5)
 
 st.subheader("📍 Nearby Infrastructure")
 
