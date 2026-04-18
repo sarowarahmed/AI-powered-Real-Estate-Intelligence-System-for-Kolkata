@@ -4,6 +4,28 @@ import joblib
 import shap
 from sqlalchemy import create_engine
 from config.settings import FEATURES, DB_PATH, MODEL_PATH
+from geopy.geocoders import Nominatim
+from src.data_pipeline.geo_osm import get_nearest_places
+
+geolocator = Nominatim(user_agent="real_estate_app")
+
+def get_lat_lon(location):
+    try:
+        loc = geolocator.geocode(location + ", Kolkata, India")
+        return loc.latitude, loc.longitude
+    except:
+        return 22.57, 88.36  # fallback Kolkata
+
+geo_data = get_nearest_places(lat, lon)
+
+metro_distance = geo_data.get("metro", 5)
+hospital_distance = geo_data.get("hospital", 5)
+school_distance = geo_data.get("school", 5)
+college_distance = geo_data.get("college", 5)
+bus_distance = geo_data.get("bus", 3)
+railway_distance = geo_data.get("railway", 5)
+police_distance = geo_data.get("police", 5)
+postoffice_distance = geo_data.get("post_office", 5)
 
 st.set_page_config(layout="wide")
 
@@ -45,20 +67,25 @@ location_score = st.sidebar.slider("Location Score", 1, 10, 7)
 livability_score = st.sidebar.slider("Livability Score", 0.0, 10.0, 5.0)
 avg_price_per_sqft = df["price_per_sqft"].mean()
 
+st.sidebar.subheader("📍 Select Location")
+
+locations = sorted(df["location"].dropna().unique())
+
+selected_location = st.sidebar.selectbox("Choose Area", locations)
+
 # simple defaults for now
 input_data = pd.DataFrame([{
     "sqft": sqft,
-    "price_per_sqft": avg_price_per_sqft,
     "location_score": location_score,
     "livability_score": livability_score,
-    "metro_distance_km": 2,
-    "hospital_distance_km": 2,
-    "school_distance_km": 2,
-    "college_distance_km": 2,
-    "bus_stop_distance_km": 1,
-    "railway_distance_km": 3,
-    "police_distance_km": 2,
-    "postoffice_distance_km": 2
+    "metro_distance_km": metro_distance,
+    "hospital_distance_km": hospital_distance,
+    "school_distance_km": school_distance,
+    "college_distance_km": college_distance,
+    "bus_stop_distance_km": bus_distance,
+    "railway_distance_km": railway_distance,
+    "police_distance_km": police_distance,
+    "postoffice_distance_km": postoffice_distance
 }])
 
 # -----------------------
@@ -124,24 +151,41 @@ st.dataframe(sample[["location", "price", "sqft", "livability_score"]])
 import pydeck as pdk
 
 if "lat" in df.columns:
-    st.subheader("🗺️ Map View")
+    st.subheader("🗺️ Live Location Map")
+
+    map_df = pd.DataFrame({
+        "lat": [lat],
+        "lon": [lon]
+        })
 
     st.pydeck_chart(pdk.Deck(
         initial_view_state=pdk.ViewState(
-            latitude=22.57,
-            longitude=88.36,
-            zoom=10,
+            latitude=lat,
+            longitude=lon,
+            zoom=13,
         ),
         layers=[
             pdk.Layer(
                 "ScatterplotLayer",
-                data=df,
+                data=map_df,
                 get_position='[lon, lat]',
-                get_radius=200,
-                get_color=[200, 30, 0, 160],
+                get_radius=300,
+                get_color=[255, 0, 0],
             )
         ],
     ))
+
+st.subheader("📍 Nearby Infrastructure")
+
+st.write({
+    "🚇 Metro (km)": metro_distance,
+    "🏥 Hospital (km)": hospital_distance,
+    "🏫 School (km)": school_distance,
+    "🎓 College (km)": college_distance,
+    "🚌 Bus Stop (km)": bus_distance,
+    "🚆 Railway (km)": railway_distance,
+    "🚓 Police (km)": police_distance,
+})
 
 import numpy as np
 

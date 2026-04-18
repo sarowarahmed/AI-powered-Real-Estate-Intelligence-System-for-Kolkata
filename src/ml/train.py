@@ -21,7 +21,6 @@ print("Data shape:", df.shape)
 # ---------------------------
 features = [
     "sqft",
-    "price_per_sqft",
     "location_score",
     "livability_score",
     "metro_distance_km",
