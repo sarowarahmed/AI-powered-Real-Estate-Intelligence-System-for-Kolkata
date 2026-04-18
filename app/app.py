@@ -3,6 +3,7 @@ import pandas as pd
 import joblib
 import shap
 from sqlalchemy import create_engine
+from config.settings import FEATURES, DB_PATH, MODEL_PATH
 
 st.set_page_config(layout="wide")
 
@@ -102,7 +103,13 @@ top_features = sorted(
 
 st.subheader("📊 Area Insights")
 
-st.write(df.groupby("location")["price"].mean().sort_values(ascending=False).head(10))
+clean_df = df[df["location"].str.len() < 30]  # remove long garbage titles
+st.write(
+    clean_df.groupby("location")["price"]
+    .mean()
+    .sort_values(ascending=False)
+    .head(10)
+)
 
 import plotly.express as px
 
@@ -138,19 +145,27 @@ if "lat" in df.columns:
 
 import numpy as np
 
-preds = [model.predict(input_data)[0] for _ in range(10)]
-low = np.percentile(preds, 10)
-high = np.percentile(preds, 90)
+samples = []
+
+for _ in range(30):
+    noisy = input_data.copy()
+    noisy["sqft"] *= np.random.uniform(0.9, 1.1)
+    noisy["livability_score"] *= np.random.uniform(0.9, 1.1)
+    samples.append(model.predict(noisy)[0])
+
+low = np.percentile(samples, 10)
+high = np.percentile(samples, 90)
 
 st.write(f"📉 Confidence Range: ₹{int(low):,} - ₹{int(high):,}")
 
 st.subheader("🎯 Top Reasons (Human Explanation)")
 
-total_impact = sum(abs(shap_values_input[0].values))
+total = sum(abs(shap_values_input[0].values))
+
 for name, val in top_features:
-    impact = abs(val) / total_impact * prediction
+    impact = (val / total) * prediction
 
     if val > 0:
-        st.success(f"✅ {name} increased price by ₹{impact:,.0f}")
+        st.success(f"✅ {name} increased price by ₹{abs(impact):,.0f}")
     else:
-        st.error(f"❌ {name} decreased price by ₹{impact:,.0f}")
+        st.error(f"❌ {name} decreased price by ₹{abs(impact):,.0f}")

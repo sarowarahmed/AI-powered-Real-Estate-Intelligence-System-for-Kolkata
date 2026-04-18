@@ -2,6 +2,7 @@ import pandas as pd
 import shap
 import joblib
 from sqlalchemy import create_engine
+from config.settings import FEATURES, DB_PATH, MODEL_PATH
 
 # Load model
 model = joblib.load("models/xgb_model.pkl")
