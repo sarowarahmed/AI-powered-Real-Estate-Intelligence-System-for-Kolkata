@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_absolute_error, r2_score
 import xgboost as xgb
 import joblib
+from config.settings import FEATURES, DB_PATH, MODEL_PATH
  
 # Load data from DB
 engine = create_engine("sqlite:///data/real_estate.db")
