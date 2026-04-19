@@ -34,7 +34,7 @@ def scrape_magicbricks():
                 # ✅ NOW safe to use title
                 location = location_el.inner_text() if location_el else title
         
-                price = price_el.inner_text() if price_el else N
+                price = price_el.inner_text() if price_el else None
                 area = area_el.inner_text() if area_el else None
 
                 if price:  # only append valid rows
