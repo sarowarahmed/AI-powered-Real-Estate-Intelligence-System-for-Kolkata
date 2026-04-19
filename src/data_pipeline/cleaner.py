@@ -81,27 +81,15 @@ def clean_data(df):
     # ✅ Only drop critical fields
     df = df.dropna(subset=["price", "sqft"])
 
-    # --- GEO FEATURES ---
-    df["metro_distance_km"] = df["location"].apply(get_distance_to_metro)
-    df["hospital_distance_km"] = df["location"].apply(get_hospital_distance)
-    df["school_distance_km"] = df["location"].apply(get_school_distance)
-    df["college_distance_km"] = df["location"].apply(get_college_distance)
-    df["bus_stop_distance_km"] = df["location"].apply(get_transport_distance)
-    df["railway_distance_km"] = df["location"].apply(get_railway_distance)
-    df["police_distance_km"] = df["location"].apply(get_police_distance)
-    df["postoffice_distance_km"] = df["location"].apply(get_postoffice_distance)
+    df["metro_distance_km"] = 5
+    df["hospital_distance_km"] = 5
+    df["school_distance_km"] = 5
+    df["college_distance_km"] = 5
+    df["bus_stop_distance_km"] = 5
+    df["railway_distance_km"] = 5
+    df["police_distance_km"] = 5
+    df["postoffice_distance_km"] = 5
 
-    #filling missing geo values:
-    df["hospital_distance_km"] = df["hospital_distance_km"].fillna(10)
-    df["school_distance_km"] = df["school_distance_km"].fillna(10)
-    df["bus_stop_distance_km"] = df["bus_stop_distance_km"].fillna(10)
-    df["college_distance_km"] = df["college_distance_km"].fillna(10)
-    df["railway_distance_km"] = df["railway_distance_km"].fillna(10)
-    df["police_distance_km"] = df["police_distance_km"].fillna(10)
-    df["postoffice_distance_km"] = df["postoffice_distance_km"].fillna(10)
-
-
-    
     print("DEBUG LOCATIONS:")
     print(df["location"].unique())
     
