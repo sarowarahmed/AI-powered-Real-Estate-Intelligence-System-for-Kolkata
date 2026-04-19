@@ -19,20 +19,7 @@ print("Data shape:", df.shape)
 # ---------------------------
 # FEATURE SELECTION
 # ---------------------------
-features = [
-    "sqft",
-    "location_score",
-    "livability_score",
-    "metro_distance_km",
-    "hospital_distance_km",
-    "school_distance_km",
-    "college_distance_km",
-    "bus_stop_distance_km",
-    "railway_distance_km",
-    "police_distance_km",
-    "postoffice_distance_km"
-]
-
+features = FEATURES
 # Drop missing
 df = df.dropna(subset=features + ["price"])
 
@@ -77,6 +64,6 @@ print("Mean CV R2:", scores.mean())
 # ---------------------------
 # SAVE MODEL
 # ---------------------------
-joblib.dump(model, "models/xgb_model.pkl")
+joblib.dump(model, MODEL_PATH)
 
 print("Model saved!")
