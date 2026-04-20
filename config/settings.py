@@ -1,4 +1,4 @@
-FEATURES = [
+features_PATH = [
     "sqft",
     "location_score",
     "livability_score",
@@ -12,5 +12,5 @@ FEATURES = [
     "postoffice_distance_km"
 ]
 
-DB_PATH = "sqlite:///data/real_estate.db"
-MODEL_PATH = "models/xgb_model.pkl"
+db_PATH = "sqlite:///data/real_estate.db"
+model_PATH = "models/xgb_model.pkl"
