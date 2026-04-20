@@ -151,7 +151,7 @@ def get_location_score(location):
         "Barrackpore": 5
     }
 
-    # Returns the score if found, otherwise defaults to 5
+    # Returns the score if found, otherwise defaults to 4
     return scores.get(location, 4)
 
 def compute_livability(row):

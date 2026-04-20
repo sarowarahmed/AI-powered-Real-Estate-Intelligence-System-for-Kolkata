@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import mean_absolute_error, r2_score
 import xgboost as xgb
 import joblib
-from config.settings import FEATURES, DB_PATH, MODEL_PATH
+from config.settings import features_PATH, db_PATH, model_PATH
  
 # Load data from DB
 engine = create_engine("sqlite:///data/real_estate.db")
@@ -19,7 +19,7 @@ print("Data shape:", df.shape)
 # ---------------------------
 # FEATURE SELECTION
 # ---------------------------
-features = FEATURES
+features = features_PATH
 # Drop missing
 df = df.dropna(subset=features + ["price"])
 
@@ -64,6 +64,6 @@ print("Mean CV R2:", scores.mean())
 # ---------------------------
 # SAVE MODEL
 # ---------------------------
-joblib.dump(model, MODEL_PATH)
+joblib.dump(model, model_PATH)
 
 print("Model saved!")
