@@ -1,15 +1,13 @@
 # Ignore virtual environment
 venv/
-
-# Python cache
 __pycache__/
 *.pyc
 
-# Database (optional)
-data/*.db
+# Cache
+.cache/
 
-# Models (optional)
-models/*.pkl
-
-# OS files
+# OS
 .DS_Store
+
+# Optional
+.env
