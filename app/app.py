@@ -13,6 +13,7 @@ from streamlit_folium import st_folium
 import folium
 import pydeck as pdk
 from src.data_pipeline.cleaner import get_location_score
+from sklearn.metrics.pairwise import euclidean_distances
 
 # -----------------------
 # CONFIG
@@ -160,6 +161,61 @@ else:
     # -----------------------
     prediction = model.predict(input_data)[0]
     st.metric("💰 Predicted Price", f"₹{int(prediction):,}")
+
+    # -----------------------
+    # SMART RECOMMENDATION ENGINE
+    # -----------------------
+    from sklearn.metrics.pairwise import euclidean_distances
+
+    st.subheader("🤖 Recommended Properties")
+
+    feature_cols = ["sqft", "location_score", "livability_score", "price"]
+
+    # Copy dataset
+    df_rec = df.copy()
+    df_rec = df_rec.dropna(subset=feature_cols)
+
+    # -----------------------
+    # APPLY WEIGHTING (IMPORTANT)
+    # -----------------------
+    df_rec_weighted = df_rec.copy()
+
+    df_rec_weighted["sqft"] *= 0.5
+    df_rec_weighted["price"] *= 1.0
+    df_rec_weighted["location_score"] *= 2.0
+    df_rec_weighted["livability_score"] *= 2.0
+
+    # Input vector
+    input_vector = pd.DataFrame([{
+        "sqft": sqft,
+        "location_score": location_score,
+        "livability_score": 5,
+        "price": prediction
+    }])
+
+    # Apply same weights to input
+    input_vector["sqft"] *= 0.5
+    input_vector["price"] *= 1.0
+    input_vector["location_score"] *= 2.0
+    input_vector["livability_score"] *= 2.0
+
+    # -----------------------
+    # DISTANCE CALCULATION
+    # -----------------------
+    distances = euclidean_distances(
+        df_rec_weighted[feature_cols],
+        input_vector[feature_cols]
+    )
+
+    df_rec["similarity"] = distances
+
+    # Get top matches
+    recommendations = df_rec.sort_values("similarity").head(5)
+
+    # Display
+    st.dataframe(
+        recommendations[["location", "price", "sqft", "livability_score"]]
+    )
 
     # -----------------------
     # CONFIDENCE RANGE
