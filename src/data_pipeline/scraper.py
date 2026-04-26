@@ -58,6 +58,17 @@ def scrape_magicbricks():
 
     df = pd.DataFrame(data)
     print("\n✅ Total Scraped rows:", len(df))
-    print(df.shape)
+    
 
     return df
+
+if __name__ == "__main__":
+    from sqlalchemy import create_engine
+
+    df = scrape_magicbricks()
+
+    engine = create_engine("sqlite:///data/real_estate.db")
+
+    df.to_sql("properties", engine, if_exists="replace", index=False)
+
+    print("✅ Data saved to DB:", len(df))

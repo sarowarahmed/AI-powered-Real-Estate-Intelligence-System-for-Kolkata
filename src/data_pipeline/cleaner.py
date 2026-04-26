@@ -172,3 +172,21 @@ def compute_livability(row):
     score = 10 * (1 / (1 + avg_dist / 2))
 
     return round(score, 2)
+
+if __name__ == "__main__":
+    import pandas as pd
+    from sqlalchemy import create_engine
+
+    print("🔄 Loading data from DB...")
+
+    engine = create_engine("sqlite:///data/real_estate.db")
+    df = pd.read_sql("SELECT * FROM properties", engine)
+
+    print("📊 Raw rows:", len(df))
+
+    df_clean = clean_data(df)
+    df_clean.to_sql("properties", engine, if_exists="replace", index=False)
+
+    print("✅ Cleaned rows:", len(df_clean))
+    print(df_clean.head())
+    print(df_clean.head())
