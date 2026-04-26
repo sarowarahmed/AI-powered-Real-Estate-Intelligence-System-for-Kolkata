@@ -2,9 +2,9 @@ import sys
 import os
 
 # Add project root to Python path
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(ROOT_DIR)
-print("ROOT:", ROOT_DIR)
+root_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(root_DIR)
+print("ROOT:", root_DIR)
 print("PATH:", sys.path)
 
 import streamlit as st
@@ -57,7 +57,7 @@ def get_lat_lon(location):
 def prepare_heatmap_data(df):
     heatmap_data = []
 
-    grouped = df.groupby("location")["price_per_sqft"].mean().reset_index()
+    grouped = df.groupby("location")["price"].mean().reset_index()
 
     for _, row in grouped.iterrows():
         lat, lon = get_lat_lon(row["location"])
@@ -65,7 +65,7 @@ def prepare_heatmap_data(df):
             heatmap_data.append({
                 "lat": lat,
                 "lon": lon,
-                "price": row["price_per_sqft"]
+                "price": row["price"]
             })
 
     return pd.DataFrame(heatmap_data)
