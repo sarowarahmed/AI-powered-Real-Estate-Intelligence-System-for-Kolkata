@@ -1,17 +1,9 @@
 import re
 import math
 from .geo_features import get_distance_to_metro
-from .geo_osm import (
-    get_hospital_distance,
-    get_school_distance,
-    get_transport_distance,
-    get_college_distance,
-    get_railway_distance,
-    get_police_distance,
-    get_postoffice_distance
-)
 
-LOCATION_MAP = {
+
+location_MAP = {
     "new town": "New Town",
     "rajarhat": "Rajarhat",
     "salt lake": "Salt Lake",
@@ -67,7 +59,7 @@ def extract_location(text):
     
     text = text.lower()
     
-    for key, value in LOCATION_MAP.items():
+    for key, value in location_MAP.items():
         if key in text:
             return value
     

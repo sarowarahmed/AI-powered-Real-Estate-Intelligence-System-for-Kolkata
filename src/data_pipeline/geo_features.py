@@ -1,7 +1,7 @@
 from geopy.distance import geodesic
 
 # Sample Kolkata metro stations (expand later)
-METRO_STATIONS = {
+metro_STATIONS = {
     # --- BLUE LINE (North-South) ---
     "Dakshineswar": (22.6548, 88.3582),
     "Baranagar": (22.6433, 88.3654),
@@ -86,7 +86,7 @@ METRO_STATIONS = {
 }
 
 # Approx location coordinates (simple mapping)
-LOCATION_COORDS = {
+locations_COORDS = {
     # Tier 10
     "Alipore": (22.5310, 88.3330),
     "Ballygunge": (22.5280, 88.3650),
@@ -132,14 +132,14 @@ LOCATION_COORDS = {
 }
 
 def get_distance_to_metro(location):
-    if location not in LOCATION_COORDS:
+    if location not in location_COORDS:
         return None
 
-    property_coord = LOCATION_COORDS[location]
+    property_coord = location_COORDS[location]
 
     min_distance = float("inf")
 
-    for metro, coord in METRO_STATIONS.items():
+    for metro, coord in metro_STATIONS.items():
         dist = geodesic(property_coord, coord).km
         min_distance = min(min_distance, dist)
 
