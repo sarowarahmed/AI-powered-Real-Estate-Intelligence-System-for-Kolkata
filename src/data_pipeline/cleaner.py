@@ -86,7 +86,8 @@ def clean_data(df):
     print(df["location"].unique())
     
     # --- OTHER FEATURES ---
-    df["price_per_sqft"] = df["price"] / df["sqft"]
+    ###df["price_per_sqft"] = df["price"] / df["sqft"]
+    
     df["location_score"] = df["location"].apply(get_location_score)
 
     df["livability_score"] = df.apply(compute_livability, axis=1)
