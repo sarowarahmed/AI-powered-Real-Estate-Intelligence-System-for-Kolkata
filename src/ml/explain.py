@@ -2,7 +2,7 @@ import pandas as pd
 import shap
 import joblib
 from sqlalchemy import create_engine
-from config.settings import FEATURES, DB_PATH, MODEL_PATH
+from config.settings import features_PATH, db_PATH, model_PATH
 
 # Load model
 model = joblib.load("models/xgb_model.pkl")
@@ -12,7 +12,7 @@ engine = create_engine("sqlite:///data/real_estate.db")
 df = pd.read_sql("SELECT * FROM properties", engine)
 
 # Same features as training
-features = FEATURES
+features = features_PATH
 
 df = df.dropna(subset=features)
 
