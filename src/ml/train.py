@@ -1,7 +1,7 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -24,7 +24,7 @@ features = features_PATH
 df = df.dropna(subset=features + ["price"])
 
 X = df[features]
-y = df["price"]
+y = np.log1p(df["price"])
 
 # ---------------------------
 # TRAIN TEST SPLIT
@@ -37,14 +37,17 @@ X_train, X_test, y_train, y_test = train_test_split(
 # MODEL
 # ---------------------------
 model = xgb.XGBRegressor(
-    n_estimators=300,
-    learning_rate=0.05,
-    max_depth=5,
+    n_estimators=500,
+    learning_rate=0.03,
+    max_depth=6,
+    subsample=0.8,
+    colsample_bytree=0.8,
     random_state=42
 )
 
 model.fit(X_train, y_train)
 
+print("MODEL FEATURES:", model.get_booster().feature_names)
 # ---------------------------
 # EVALUATION
 # ---------------------------

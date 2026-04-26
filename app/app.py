@@ -1,3 +1,12 @@
+import sys
+import os
+
+# Add project root to Python path
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(ROOT_DIR)
+print("ROOT:", ROOT_DIR)
+print("PATH:", sys.path)
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -159,7 +168,7 @@ else:
     # -----------------------
     # PREDICTION
     # -----------------------
-    prediction = model.predict(input_data)[0]
+    prediction = np.expm1(model.predict(input_data))[0]
     st.metric("💰 Predicted Price", f"₹{int(prediction):,}")
 
     # -----------------------
